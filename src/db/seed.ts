@@ -85,10 +85,25 @@ async function main() {
     console.log("Admin NOT created: on the live database use a strong ADMIN_PASSWORD (10+ characters, not the sample one).");
   } else if (email && password) {
     const has = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
-    if (has.length === 0) {
-      await db.insert(users).values({ name: "Admin", email, passwordHash: hashPassword(password), role: "admin" });
-      console.log(`Created admin account ${email}`);
-    }
+   if (has.length === 0) {
+  await db.insert(users).values({
+    name: "Admin",
+    email,
+    passwordHash: hashPassword(password),
+    role: "admin",
+  });
+
+  console.log(`Created admin account ${email}`);
+} else {
+  await db.update(users)
+    .set({
+      passwordHash: hashPassword(password),
+      role: "admin",
+    })
+    .where(eq(users.email, email));
+
+  console.log(`Updated admin password for ${email}`);
+}
   } else {
     console.log("No ADMIN_EMAIL / ADMIN_PASSWORD in .env, so no admin account was created.");
   }
