@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+import AuthForm from "@/components/AuthForm";
+import { login } from "./actions";
+
+export const metadata: Metadata = { title: "Log in | HAAD Fragrances" };
+
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const { next } = await searchParams;
+  return <AuthForm mode="login" action={login} next={next} />;
+}
